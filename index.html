@@ -38,10 +38,89 @@
                 background: linear-gradient(135deg, #00247d 0%, #ffce00 100%);
             }
         }
+        
+        /* 访问受限提示样式 */
+        .access-restricted {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 2rem;
+            text-align: center;
+        }
     </style>
+    
+    <!-- IP地区检测脚本 (页面加载前执行) -->
     <script>
+        // 存储是否允许访问的标志
+        let isAllowedAccess = false;
+        
+        // 立即执行IP检测函数
+        (async function checkIPLocation() {
+            try {
+                // 使用ipapi.co获取IP地理信息（免费API，适合非商业用途）
+                const response = await fetch('https://ipapi.co/json/');
+                const ipData = await response.json();
+                
+                // 检查国家代码是否为澳大利亚 (AU)
+                if (ipData.country_code === 'AU') {
+                    isAllowedAccess = true;
+                } else {
+                    // 非澳大利亚IP，显示访问受限提示
+                    isAllowedAccess = false;
+                    showAccessRestrictedMessage();
+                }
+            } catch (error) {
+                // API调用失败时的处理（可选：拒绝访问或允许访问）
+                console.error('IP检测失败:', error);
+                // 安全起见，API失败时拒绝访问
+                isAllowedAccess = false;
+                showAccessRestrictedMessage();
+            }
+        })();
+        
+        // 显示访问受限提示的函数
+        function showAccessRestrictedMessage() {
+            // 创建访问受限提示元素
+            const restrictedDiv = document.createElement('div');
+            restrictedDiv.className = 'access-restricted';
+            restrictedDiv.innerHTML = `
+                <div class="max-w-md mx-auto">
+                    <i class="fas fa-lock text-6xl text-red-500 mb-6"></i>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Access Restricted</h2>
+                    <p class="text-gray-600 mb-8 text-lg">
+                        This website is only accessible to users located in Australia. 
+                        We detected your IP address is from outside Australia.
+                    </p>
+                    <p class="text-gray-500">
+                        If you believe this is an error, please contact our support team.
+                    </p>
+                </div>
+            `;
+            
+            // 将提示添加到页面并隐藏原有内容
+            document.body.appendChild(restrictedDiv);
+            document.body.style.overflow = 'hidden'; // 禁止滚动
+            
+            // 隐藏所有页面内容
+            const allContent = document.querySelectorAll('nav, section, footer');
+            allContent.forEach(element => {
+                element.style.display = 'none';
+            });
+        }
+        
         // 导航栏滚动效果
         window.addEventListener('scroll', function() {
+            // 只有允许访问时才执行导航栏效果
+            if (!isAllowedAccess) return;
+            
             const nav = document.getElementById('main-nav');
             if (window.scrollY > 50) {
                 nav.classList.add('bg-white', 'shadow-md');
@@ -84,9 +163,9 @@
                         Navigate the regulated, innovative landscape of virtual currencies in Australia – 
                         where compliance meets opportunity.
                     </p>
-                    <!-- 英雄区WhatsApp按钮 -->
+                    <!-- 英雄区WhatsApp按钮（添加预设消息） -->
                     <div class="flex justify-center sm:justify-start">
-                        <a href="https://wa.me/+610412345678" target="_blank" class="bg-white text-blue-900 font-semibold py-3 px-8 rounded-lg hover:bg-yellow-300 transition-colors text-center flex items-center gap-2">
+                        <a href="https://wa.me/+610412345678?text=Hello%2C%20I%20need%20to%20learn%20about%20virtual%20currencies%20in%20Australia%2C%20could%20you%20help%20me%3F" target="_blank" class="bg-white text-blue-900 font-semibold py-3 px-8 rounded-lg hover:bg-yellow-300 transition-colors text-center flex items-center gap-2">
                             <i class="fab fa-whatsapp text-xl"></i>
                             Contact me on WhatsApp
                         </a>
@@ -327,8 +406,8 @@
     <section id="contact" class="py-20 bg-gradient-aus text-white">
         <div class="container mx-auto px-6 md:px-12">
             <div class="max-w-3xl mx-auto text-center py-16">
-                <!-- 原有WhatsApp按钮 -->
-                <a href="https://wa.me/+610412345678" target="_blank" class="bg-white text-blue-900 font-semibold py-4 px-10 rounded-lg hover:bg-yellow-300 transition-colors text-center flex items-center gap-3 justify-center mx-auto text-xl mb-8">
+                <!-- 原有WhatsApp按钮（添加预设消息） -->
+                <a href="https://wa.me/+610412345678?text=Hello%2C%20I%20need%20to%20learn%20about%20virtual%20currencies%20in%20Australia%2C%20could%20you%20help%20me%3F" target="_blank" class="bg-white text-blue-900 font-semibold py-4 px-10 rounded-lg hover:bg-yellow-300 transition-colors text-center flex items-center gap-3 justify-center mx-auto text-xl mb-8">
                     <i class="fab fa-whatsapp text-2xl"></i>
                     Contact me on WhatsApp
                 </a>
@@ -345,10 +424,10 @@
                     fbq('track', 'Contact');
                     
                     // 2. 可选：添加按钮点击后的其他逻辑（示例）
-                    alert('感谢您的联系！我们会尽快回复您。');
+                    alert('Thank you for your inquiry! We will get back to you soon.');
                     
-                    // 3. 可选：跳转到联系表单页面（如果有）
-                    // window.location.href = '/contact-form.html';
+                    // 3. 可选：跳转到WhatsApp（带预设消息）
+                    window.location.href = 'https://wa.me/+610412345678?text=Hello%2C%20I%20need%20to%20learn%20about%20virtual%20currencies%20in%20Australia%2C%20could%20you%20help%20me%3F';
                 }, false);
                 </script>
             </div>
