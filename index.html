@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Currency in Australia | Regulation & Adoption</title>
+    <!-- Tailwind CSS CDN (快速构建响应式界面) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome (图标库) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .bg-gradient-aus {
+                background: linear-gradient(135deg, #00247d 0%, #ffce00 100%);
+            }
+        }
+    </style>
+    <style>
+        /* 页面加载和访问限制样式 */
+        #access-restriction {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9998;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #00247d;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // IP地域限制检测 - 页面加载前执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示加载屏幕
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            // 获取IP地理信息
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    const accessRestriction = document.getElementById('access-restriction');
+                    const mainContent = document.getElementById('main-content');
+                    
+                    // 检查是否为澳大利亚IP (国家代码 AU)
+                    if (data.country_code !== 'AU') {
+                        // 非澳大利亚IP - 显示访问限制
+                        accessRestriction.style.display = 'flex';
+                        mainContent.style.display = 'none';
+                    } else {
+                        // 澳大利亚IP - 显示正常内容
+                        accessRestriction.style.display = 'none';
+                        mainContent.style.display = 'block';
+                    }
+                    
+                    // 隐藏加载屏幕
+                    loadingScreen.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('IP检测失败:', error);
+                    // 检测失败时的备用方案 - 可以选择允许访问或拒绝
+                    // 这里设置为拒绝访问，确保安全性
+                    document.getElementById('access-restriction').style.display = 'flex';
+                    document.getElementById('main-content').style.display = 'none';
+                    document.getElementById('loading-screen').style.display = 'none';
+                });
+            
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const nav = document.getElementById('main-nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('bg-white', 'shadow-md');
+                    nav.classList.remove('bg-transparent');
+                } else {
+                    nav.classList.remove('bg-white', 'shadow-md');
+                    nav.classList.add('bg-transparent');
+                }
+            });
+        });
+    </script>
+</head>
+<body class="font-sans text-gray-800 antialiased">
+    <!-- 加载屏幕 -->
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <p class="text-xl text-gray-700">Verifying your access...</p>
+    </div>
+    
+    <!-- 访问限制提示 -->
+    <div id="access-restriction">
+        <div class="max-w-md mx-auto">
+            <i class="fas fa-lock text-6xl text-red-600 mb-6"></i>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Access Restricted</h2>
+            <p class="text-gray-600 mb-8 text-lg">
+                This website is only accessible to visitors from Australia. 
+                We detected that your IP address is not located in Australia.
+            </p>
+            <div class="bg-gray-100 p-4 rounded-lg">
+                <p class="text-gray-700 font-medium">
+                    <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                    For more information, please contact our support team.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div id="main-content">
+        <!-- 导航栏 -->
+        <nav id="main-nav" class="fixed w-full z-50 bg-transparent transition-all duration-300 py-4">
+            <div class="container mx-auto px-6 md:px-12 flex justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-white text-shadow">AusCrypto</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#overview" class="text-white hover:text-yellow-300 transition-colors">Overview</a>
+                    <a href="#regulation" class="text-white hover:text-yellow-300 transition-colors">Regulation</a>
+                    <a href="#use-cases" class="text-white hover:text-yellow-300 transition-colors">Use Cases</a>
+                    <a href="#faq" class="text-white hover:text-yellow-300 transition-colors">FAQ</a>
+                    <a href="#contact" class="text-white hover:text-yellow-300 transition-colors">Contact</a>
+                </div>
+                <!-- 移动端菜单按钮 -->
+                <button class="md:hidden text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 英雄区 -->
+        <section class="bg-gradient-aus min-h-screen flex items-center pt-16">
+            <div class="container mx-auto px-6 md:px-12 py-20">
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2 text-white">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                            Digital Currency <br> in Australia
+                        </h1>
+                        <p class="text-lg md:text-xl mb-8 opacity-90">
+                            Navigate the regulated, innovative landscape of virtual currencies in Australia – 
+                            where compliance meets opportunity.
+                        </p>
+                        <!-- 英雄区WhatsApp按钮 -->
+                        <div class="flex justify-center sm:justify-start">
+                            <a href="https://wa.me/+610412345678" target="_blank" class="bg-white text-blue-900 font-semibold py-3 px-8 rounded-lg hover:bg-yellow-300 transition-colors text-center flex items-center gap-2">
+                                <i class="fab fa-whatsapp text-xl"></i>
+                                Contact me on WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <img src="https://picsum.photos/id/180/800/600" alt="Australia Digital Currency" class="rounded-lg shadow-2xl w-full h-auto">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 概述部分 -->
+        <section id="overview" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-6 md:px-12">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Australia's Virtual Currency Landscape</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto">
+                        Australia has emerged as a leading jurisdiction for digital currency adoption, 
+                        with clear regulatory frameworks and growing mainstream acceptance.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                        <div class="text-blue-900 text-3xl mb-4">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Growing Adoption</h3>
+                        <p class="text-gray-600">
+                            Over 20% of Australian adults hold digital currencies, with major retailers and financial institutions 
+                            increasingly integrating crypto payment solutions.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                        <div class="text-blue-900 text-3xl mb-4">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Robust Regulation</h3>
+                        <p class="text-gray-600">
+                            Regulated by AUSTRAC (Australian Transaction Reports and Analysis Centre), 
+                            ensuring anti-money laundering (AML) and counter-terrorism financing (CTF) compliance.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                        <div class="text-blue-900 text-3xl mb-4">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Innovation Hub</h3>
+                        <p class="text-gray-600">
+                            Australia is home to a thriving crypto startup ecosystem, supported by government initiatives 
+                            and access to global financial markets.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 监管框架 -->
+        <section id="regulation" class="py-20 bg-white">
+            <div class="container mx-auto px-6 md:px-12">
+                <div class="flex flex-col md:flex-row gap-12 items-center">
+                    <div class="md:w-1/2">
+                        <img src="https://picsum.photos/id/48/800/600" alt="Australian Crypto Regulation" class="rounded-lg shadow-xl w-full h-auto">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">Regulatory Framework for Virtual Currencies</h2>
+                        <p class="text-gray-600 mb-6">
+                            Australia has one of the most comprehensive and clear regulatory regimes for digital currencies in the world, 
+                            designed to protect consumers while fostering innovation.
+                        </p>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold">AUSTRAC Registration</h4>
+                                    <p class="text-gray-600 text-sm">All crypto exchanges must register with AUSTRAC and comply with AML/CTF laws.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold">Taxation Guidelines</h4>
+                                    <p class="text-gray-600 text-sm">ATO (Australian Taxation Office) provides clear rules for crypto taxation (CGT, GST).</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold">Consumer Protection</h4>
+                                    <p class="text-gray-600 text-sm">ASIC (Australian Securities and Investments Commission) regulates crypto financial products.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold">Stablecoin Regulation</h4>
+                                    <p class="text-gray-600 text-sm">New 2024 regulations for stablecoins to ensure liquidity and redemption rights.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 应用场景 -->
+        <section id="use-cases" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-6 md:px-12">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Real-World Use Cases in Australia</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto">
+                        Virtual currencies are no longer just speculative assets – they are being integrated into everyday Australian life.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                        <img src="https://picsum.photos/id/237/800/400" alt="Crypto Payments" class="w-full h-60 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">Retail Payments</h3>
+                            <p class="text-gray-600 mb-4">
+                                Major Australian retailers (including Woolworths, Coles, and Harvey Norman) now accept crypto payments 
+                                via third-party processors like Crypto.com Pay and CoinJar.
+                            </p>
+                            <a href="#" class="text-blue-900 font-medium hover:text-yellow-600 transition-colors">Learn more <i class="fas fa-arrow-right text-sm"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                        <img src="https://picsum.photos/id/1048/800/400" alt="Crypto Trading" class="w-full h-60 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">Institutional Trading</h3>
+                            <p class="text-gray-600 mb-4">
+                                Australian superannuation funds (pension funds) and asset managers are increasingly allocating 
+                                capital to digital assets, with ASX-listed crypto ETFs now available.
+                            </p>
+                            <a href="#" class="text-blue-900 font-medium hover:text-yellow-600 transition-colors">Learn more <i class="fas fa-arrow-right text-sm"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                        <img src="https://picsum.photos/id/42/800/400" alt="Crypto Remittances" class="w-full h-60 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">Cross-Border Remittances</h3>
+                            <p class="text-gray-600 mb-4">
+                                Crypto remittance services offer faster, cheaper international money transfers for Australia's 
+                                migrant communities, undercutting traditional banks and Western Union.
+                            </p>
+                            <a href="#" class="text-blue-900 font-medium hover:text-yellow-600 transition-colors">Learn more <i class="fas fa-arrow-right text-sm"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                        <img src="https://picsum.photos/id/160/800/400" alt="NFTs in Australia" class="w-full h-60 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-3">NFT & Digital Assets</h3>
+                            <p class="text-gray-600 mb-4">
+                                Australian artists, sports teams (like the AFL and NRL), and cultural institutions are leveraging 
+                                NFTs for fan engagement, digital collectibles, and intellectual property monetization.
+                            </p>
+                            <a href="#" class="text-blue-900 font-medium hover:text-yellow-600 transition-colors">Learn more <i class="fas fa-arrow-right text-sm"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ部分 -->
+        <section id="faq" class="py-20 bg-white">
+            <div class="container mx-auto px-6 md:px-12">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto">
+                        Answers to the most common questions about virtual currencies in Australia.
+                    </p>
+                </div>
+
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-6 text-left font-semibold hover:bg-gray-50 transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            Is cryptocurrency legal in Australia?
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </button>
+                        <div class="p-6 bg-gray-50">
+                            <p class="text-gray-600">
+                                Yes, cryptocurrency is fully legal in Australia. The government does not ban the ownership or trading of digital currencies, 
+                                but it regulates crypto service providers to ensure consumer protection and financial stability.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-6 text-left font-semibold hover:bg-gray-50 transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            How are cryptocurrencies taxed in Australia?
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </button>
+                        <div class="p-6 bg-gray-50 hidden">
+                            <p class="text-gray-600">
+                                Cryptocurrencies are treated as property for tax purposes. Capital Gains Tax (CGT) applies to profits from selling or trading crypto, 
+                                and GST is generally not applied to crypto-to-crypto trades (since 2017). Income tax applies if crypto is earned as income (e.g., mining, staking).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-6 text-left font-semibold hover:bg-gray-50 transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            Do I need to declare crypto on my tax return?
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </button>
+                        <div class="p-6 bg-gray-50 hidden">
+                            <p class="text-gray-600">
+                                Yes, any crypto transactions (buying, selling, trading, gifting, or using crypto to pay for goods/services) must be declared on your Australian tax return. 
+                                The ATO has data-matching programs to identify undeclared crypto income.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-6 text-left font-semibold hover:bg-gray-50 transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            Are Australian banks allowed to work with crypto companies?
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </button>
+                        <div class="p-6 bg-gray-50 hidden">
+                            <p class="text-gray-600">
+                                Yes, Australian banks can work with crypto companies, but they must conduct thorough due diligence to ensure compliance with AML/CTF laws. 
+                                Major banks like Commonwealth Bank and ANZ now offer banking services to regulated crypto businesses.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact板块 -->
+        <section id="contact" class="py-20 bg-gradient-aus text-white">
+            <div class="container mx-auto px-6 md:px-12">
+                <div class="max-w-3xl mx-auto text-center py-16">
+                    <a href="https://wa.me/+610412345678" target="_blank" class="bg-white text-blue-900 font-semibold py-4 px-10 rounded-lg hover:bg-yellow-300 transition-colors text-center flex items-center gap-3 justify-center mx-auto text-xl">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                        Contact me on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="bg-gray-900 text-white py-12">
+            <div class="container mx-auto px-6 md:px-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">AusCrypto</h3>
+                        <p class="text-gray-400 mb-4">
+                            Your trusted guide to virtual currency in Australia – regulation, adoption, and innovation.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#overview" class="text-gray-400 hover:text-white transition-colors">Overview</a></li>
+                            <li><a href="#regulation" class="text-gray-400 hover:text-white transition-colors">Regulation</a></li>
+                            <li><a href="#use-cases" class="text-gray-400 hover:text-white transition-colors">Use Cases</a></li>
+                            <li><a href="#faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">AUSTRAC Guidelines</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">ATO Crypto Tax Guide</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">ASIC Consumer Alerts</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Industry Reports</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-map-marker-alt text-gray-400 mt-1"></i>
+                                <span class="text-gray-400">Sydney, NSW 2000, Australia</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-envelope text-gray-400 mt-1"></i>
+                                <span class="text-gray-400">info@auscrypto.com.au</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-phone text-gray-400 mt-1"></i>
+                                <span class="text-gray-400">+61 (0) 2 1234 5678</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-gray-800 pt-8 text-center text-gray-500">
+                    <p>&copy; 2024 AusCrypto. All rights reserved. This website is for informational purposes only and does not constitute financial advice.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
